@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Goal Manager</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_title">Goal Manager</string>
+    <string name="new_goal_title">New Goal</string>
+</resources>
