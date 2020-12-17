@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.joesemper.goalmanager.R
+import com.joesemper.goalmanager.model.Goal
 import com.joesemper.goalmanager.presentation.MainViewModel
 import com.joesemper.goalmanager.presentation.ViewState
 import com.joesemper.goalmanager.ui.adapters.MainGoalsAdapter
@@ -23,7 +24,9 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = MainGoalsAdapter()
+        val adapter = MainGoalsAdapter{
+            navigateToGoal(it)
+        }
 
         mainRecycler.adapter = adapter
 
@@ -35,5 +38,9 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 ViewState.EMPTY -> Unit
             }
         }
+    }
+
+    private fun navigateToGoal(goal: Goal) {
+        (activity as MainActivity).navigateTo(GoalFragment.create(goal))
     }
 }

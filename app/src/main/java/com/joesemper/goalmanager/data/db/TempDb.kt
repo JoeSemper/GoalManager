@@ -6,8 +6,11 @@ import com.joesemper.goalmanager.model.Goal
 
 object TempDb: DataProvider {
 
-    var list = listOf<Goal>(Goal("Goal1"), Goal("Goal1"),
-        Goal("Goal1"), Goal("Goal1"),)
+    var list = listOf<Goal>(Goal("Goal1"), Goal("Goal2"),
+        Goal("Goal3"), Goal("Goal4"), Goal("Goal1"), Goal("Goal2"),
+        Goal("Goal3"), Goal("Goal4"),Goal("Goal1"), Goal("Goal2"),
+        Goal("Goal3"), Goal("Goal4"),Goal("Goal1"), Goal("Goal2"),
+        Goal("Goal3"), Goal("Goal4"),)
 
     val data = MutableLiveData<List<Goal>>(list)
 
