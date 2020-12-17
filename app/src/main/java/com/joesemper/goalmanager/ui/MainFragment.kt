@@ -38,9 +38,18 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 ViewState.EMPTY -> Unit
             }
         }
+
+        fab.setOnClickListener{
+            navigateToNewGoalCreation()
+        }
     }
 
     private fun navigateToGoal(goal: Goal) {
         (activity as MainActivity).navigateTo(GoalFragment.create(goal))
     }
+
+    private fun navigateToNewGoalCreation() {
+        (activity as MainActivity).navigateTo(GoalFragment.create(null))
+    }
+
 }

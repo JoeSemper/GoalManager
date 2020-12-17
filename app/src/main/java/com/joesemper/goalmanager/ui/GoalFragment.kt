@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.joesemper.goalmanager.R
@@ -31,7 +32,21 @@ class GoalFragment : Fragment(R.layout.fragment_goal) {
 
         viewModel.goal.let {
             goal_title_et.setText(it?.title)
+            goal_description_et.setText(it?.description)
         }
+
+        save_button.setOnClickListener{
+            viewModel.saveGoal()
+        }
+
+        goal_title_et.addTextChangedListener{
+            viewModel.updateTitle(it?.toString() ?: "")
+        }
+
+        goal_description_et.addTextChangedListener{
+            viewModel.updateDescription(it?.toString() ?: "")
+        }
+
     }
 
     companion object {
@@ -45,4 +60,6 @@ class GoalFragment : Fragment(R.layout.fragment_goal) {
             return fragment
         }
     }
+
+
 }

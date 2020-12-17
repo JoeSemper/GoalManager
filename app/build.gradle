@@ -51,7 +51,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation "androidx.coordinatorlayout:coordinatorlayout:1.1.0"
-
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
     // DI
     def koin_ver = '2.1.6'
@@ -61,6 +61,7 @@ dependencies {
     implementation "org.koin:koin-androidx-scope:$koin_ver"
     implementation "org.koin:koin-androidx-viewmodel:$koin_ver"
 
+    //Material Design
     implementation 'com.google.android.material:material:1.2.1'
 
     //Lifecycle

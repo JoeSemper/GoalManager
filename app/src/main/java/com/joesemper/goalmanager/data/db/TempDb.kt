@@ -4,17 +4,25 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.joesemper.goalmanager.model.Goal
 
-object TempDb: DataProvider {
+object TempDb : DataProvider {
 
-    var list = listOf<Goal>(Goal("Goal1"), Goal("Goal2"),
-        Goal("Goal3"), Goal("Goal4"), Goal("Goal1"), Goal("Goal2"),
-        Goal("Goal3"), Goal("Goal4"),Goal("Goal1"), Goal("Goal2"),
-        Goal("Goal3"), Goal("Goal4"),Goal("Goal1"), Goal("Goal2"),
-        Goal("Goal3"), Goal("Goal4"),)
+    private val _list = mutableListOf(Goal(title = "Sample goal"))
+    private val list: List<Goal> = _list
 
-    val data = MutableLiveData<List<Goal>>(list)
+    private val data = MutableLiveData(list)
 
     override fun observeGoals(): LiveData<List<Goal>> {
         return data
+    }
+
+    override fun addOrReplaceGoal(newGoal: Goal) {
+
+        for (goal in _list) {
+            if (goal.id == newGoal.id) {
+                _list.remove(goal)
+            }
+            _list.add(_list.size, newGoal)
+        }
+
     }
 }

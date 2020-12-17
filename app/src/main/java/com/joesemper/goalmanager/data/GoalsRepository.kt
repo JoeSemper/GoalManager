@@ -5,4 +5,5 @@ import com.joesemper.goalmanager.model.Goal
 
 interface GoalsRepository {
     fun observeGoals(): LiveData<List<Goal>>
+    fun addOrReplaceGoal(newGoal: Goal)
 }
