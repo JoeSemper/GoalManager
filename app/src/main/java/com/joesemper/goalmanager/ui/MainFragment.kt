@@ -30,8 +30,17 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
         mainRecycler.adapter = adapter
 
+//        viewModel.observeViewState().observe(viewLifecycleOwner) {
+//            when(it) {
+//                is ViewState.Value -> {
+//                    adapter.submitList(it.goals)
+//                }
+//                ViewState.EMPTY -> Unit
+//            }
+//        }
+
         viewModel.observeViewState().observe(viewLifecycleOwner) {
-            when(it) {
+            when (it) {
                 is ViewState.Value -> {
                     adapter.submitList(it.goals)
                 }

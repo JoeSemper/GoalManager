@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    companion object {
-        fun getStartIntent(context: Context) = Intent(context, MainActivity::class.java)
-    }
+//    companion object {
+//        fun getStartIntent(context: Context) = Intent(context, MainActivity::class.java)
+//    }
 }

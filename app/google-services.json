@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "930722729351",
+    "project_id": "goal-manager-41259",
+    "storage_bucket": "goal-manager-41259.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:930722729351:android:f16af8821fb6fcdff71722",
+        "android_client_info": {
+          "package_name": "com.joesemper.goalmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "930722729351-6jaap2fohg9gsuni38puub2unanvmig1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.joesemper.goalmanager",
+            "certificate_hash": "b5b0153f6b2f7151d8048417aa1542c270f9b3c6"
+          }
+        },
+        {
+          "client_id": "930722729351-ru74snbmt1umlapc19e4li16j1jpmkeb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQQ2-8er5TXDPId2cax3BEzeCEIJc3njI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "930722729351-ru74snbmt1umlapc19e4li16j1jpmkeb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

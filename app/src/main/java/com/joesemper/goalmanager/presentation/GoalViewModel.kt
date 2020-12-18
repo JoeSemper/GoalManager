@@ -1,20 +1,32 @@
 package com.joesemper.goalmanager.presentation
 
-import androidx.lifecycle.ViewModel
-import com.joesemper.goalmanager.data.GoalsRepository
-import com.joesemper.goalmanager.data.MainRepository
-import com.joesemper.goalmanager.data.db.DataProvider
-import com.joesemper.goalmanager.data.db.TempDb
+import androidx.lifecycle.*
+import com.joesemper.goalmanager.data.goalsRepository
 import com.joesemper.goalmanager.model.Goal
 
 class GoalViewModel (var goal: Goal?) : ViewModel() {
 
-    private val db: DataProvider = TempDb
-    private val goalsRepository: GoalsRepository = MainRepository(db)
+    private val showErrorLiveData = MutableLiveData<Boolean>()
+
+    private val lifecycleOwner: LifecycleOwner = LifecycleOwner { viewModelLifecycle }
+    private val viewModelLifecycle = LifecycleRegistry(lifecycleOwner).also {
+        it.currentState = Lifecycle.State.RESUMED
+    }
+
+
+//    fun saveGoal() {
+//        val goalValue = goal ?: return
+//        goalsRepository.addOrReplaceGoal(goalValue)
+//    }
 
     fun saveGoal() {
-        val goalValue = goal ?: return
-        goalsRepository.addOrReplaceGoal(goalValue)
+        goal?.let { note ->
+            goalsRepository.addOrReplaceGoal(note).observe(lifecycleOwner) {
+                it.onFailure {
+                    showErrorLiveData.value = true
+                }
+            }
+        }
     }
 
     fun updateTitle(newTitle: String) {
@@ -29,5 +41,7 @@ class GoalViewModel (var goal: Goal?) : ViewModel() {
     private fun generateNewGoal(): Goal {
         return Goal()
     }
+
+    fun showError(): LiveData<Boolean> = showErrorLiveData
 
 }
