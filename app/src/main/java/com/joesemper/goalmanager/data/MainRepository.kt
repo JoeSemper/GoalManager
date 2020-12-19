@@ -10,7 +10,9 @@ private val idRandom = Random(0)
 val goalId: Long
     get() = idRandom.nextLong()
 
-class MainRepository (val provider: FireStoreDatabaseProvider): GoalsRepository {
+class MainRepository (private val provider: FireStoreDatabaseProvider): GoalsRepository {
+
+    override fun getCurrentUser() = provider.getCurrentUser()
 
     override fun observeGoals(): LiveData<List<Goal>> {
         return provider.observeGoals()
