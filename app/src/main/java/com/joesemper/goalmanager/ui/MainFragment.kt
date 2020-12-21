@@ -9,7 +9,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.ViewModelProvider
 import com.firebase.ui.auth.AuthUI
 import com.joesemper.goalmanager.R
 import com.joesemper.goalmanager.model.Goal
@@ -17,14 +16,11 @@ import com.joesemper.goalmanager.presentation.MainViewModel
 import com.joesemper.goalmanager.presentation.ViewState
 import com.joesemper.goalmanager.ui.adapters.MainGoalsAdapter
 import kotlinx.android.synthetic.main.fragment_main.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainFragment : Fragment(R.layout.fragment_main), LogoutDialog.LogoutListener {
 
-    private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProvider(this).get(
-            MainViewModel::class.java
-        )
-    }
+    private val viewModel by viewModel<MainViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,7 +34,7 @@ class MainFragment : Fragment(R.layout.fragment_main), LogoutDialog.LogoutListen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = MainGoalsAdapter{
+        val adapter = MainGoalsAdapter {
             navigateToGoal(it)
         }
 
@@ -53,12 +49,11 @@ class MainFragment : Fragment(R.layout.fragment_main), LogoutDialog.LogoutListen
             }
         }
 
-        fab.setOnClickListener{
+        fab.setOnClickListener {
             navigateToNewGoalCreation()
         }
 
         initToolbar()
-
     }
 
 
@@ -89,7 +84,7 @@ class MainFragment : Fragment(R.layout.fragment_main), LogoutDialog.LogoutListen
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean =
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.logout -> showLogoutDialog().let { true }
             else -> false
         }
@@ -99,8 +94,8 @@ class MainFragment : Fragment(R.layout.fragment_main), LogoutDialog.LogoutListen
         val frManager: FragmentManager = requireActivity().supportFragmentManager
 
         frManager.findFragmentByTag(LogoutDialog.TAG)
-                ?: LogoutDialog.createInstance(this)
-                    .show(frManager, LogoutDialog.TAG)
+            ?: LogoutDialog.createInstance(this)
+                .show(frManager, LogoutDialog.TAG)
 
 
     }

@@ -1,52 +1,69 @@
 package com.joesemper.goalmanager.ui
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.joesemper.goalmanager.R
+import com.joesemper.goalmanager.databinding.FragmentGoalBinding
 import com.joesemper.goalmanager.model.Goal
 import com.joesemper.goalmanager.presentation.GoalViewModel
-import kotlinx.android.synthetic.main.fragment_goal.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 
-class GoalFragment : Fragment(R.layout.fragment_goal) {
-    private val goal: Goal? by lazy(LazyThreadSafetyMode.NONE){arguments?.getParcelable(GOAL_KEY)}
+class GoalFragment : Fragment() {
+    private val goal: Goal? by lazy(LazyThreadSafetyMode.NONE) { arguments?.getParcelable(GOAL_KEY) }
 
-    private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProvider(this, object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return GoalViewModel(goal) as T
-            }
-        }).get(
-            GoalViewModel::class.java
-        )
+    private val viewModel by viewModel<GoalViewModel> {
+        parametersOf(goal)
+    }
+
+    private var _binding: FragmentGoalBinding? = null
+    private val binding: FragmentGoalBinding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentGoalBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.goal.let {
-            goal_title_et.setText(it?.title)
-            goal_description_et.setText(it?.description)
-        }
+        with(binding) {
+            viewModel.goal?.let {
+                goalTitleEt.setText(it.title)
+                goalDescriptionEt.setText(it.description)
+            }
 
-        save_button.setOnClickListener{
-            viewModel.saveGoal()
-        }
+            viewModel.showError().observe(viewLifecycleOwner) {
+                Toast.makeText(requireContext(), "Error while saving goal!", Toast.LENGTH_SHORT)
+                    .show()
+            }
 
-        goal_title_et.addTextChangedListener{
-            viewModel.updateTitle(it?.toString() ?: "")
-        }
+            saveButton.setOnClickListener {
+                viewModel.saveGoal()
+            }
 
-        goal_description_et.addTextChangedListener{
-            viewModel.updateDescription(it?.toString() ?: "")
-        }
+            goalTitleEt.addTextChangedListener {
+                viewModel.updateTitle(it?.toString() ?: "")
+            }
 
+            goalDescriptionEt.addTextChangedListener {
+                viewModel.updateDescription(it?.toString() ?: "")
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

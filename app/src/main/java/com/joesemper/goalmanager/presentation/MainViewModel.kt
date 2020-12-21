@@ -1,25 +1,21 @@
 package com.joesemper.goalmanager.presentation
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
-import com.joesemper.goalmanager.data.MainRepository
-import com.joesemper.goalmanager.data.db.DataProvider
-import com.joesemper.goalmanager.data.db.FireStoreDatabaseProvider
-import com.joesemper.goalmanager.data.db.TempDb
-import com.joesemper.goalmanager.data.goalsRepository
+import androidx.lifecycle.*
+import com.joesemper.goalmanager.data.GoalsRepository
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
-class MainViewModel : ViewModel() {
-//    private val db: DataProvider = FireStoreDatabaseProvider()
-//    private val repository = MainRepository(db)
-//
-//    fun observeViewState(): LiveData<ViewState> = repository.observeGoals()
-//        .map {
-//            if (it.isEmpty()) ViewState.EMPTY else ViewState.Value(it)
-//        }
+class MainViewModel(goalsRepository: GoalsRepository) : ViewModel() {
 
-    fun observeViewState(): LiveData<ViewState> = goalsRepository.observeGoals()
-        .map {
-            if (it.isEmpty()) ViewState.EMPTY else ViewState.Value(it)
-        }
+    private val goalsLiveData = MutableLiveData<ViewState>()
+
+    init {
+        goalsRepository.observeGoals()
+            .onEach {
+                goalsLiveData.value = if (it.isEmpty()) ViewState.EMPTY else ViewState.Value(it)
+            }
+            .launchIn(viewModelScope)
+    }
+
+    fun observeViewState(): LiveData<ViewState> = goalsLiveData
 }

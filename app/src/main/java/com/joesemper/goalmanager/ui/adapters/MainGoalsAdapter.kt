@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.joesemper.goalmanager.R
+import com.joesemper.goalmanager.databinding.ItemGoalBinding
 import com.joesemper.goalmanager.model.Goal
 import kotlinx.android.synthetic.main.item_goal.view.*
 
@@ -32,24 +33,29 @@ class MainGoalsAdapter(val goalHandler: (Goal) -> Unit) :
     }
 
 
-    inner class GoalViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
-        LayoutInflater.from(parent.context).inflate(R.layout.item_goal, parent, false)
+    inner class GoalViewHolder(
+        parent: ViewGroup,
+        private val binding: ItemGoalBinding = ItemGoalBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false,
+        )
+    ) : RecyclerView.ViewHolder(
+        binding.root
     ) {
 
-        private lateinit var currentGoal : Goal
+        private lateinit var currentGoal: Goal
+
+        fun bind(item: Goal) {
+            currentGoal = item
+            with(binding) {
+                goalTitle.text = item.title
+                root.setOnClickListener(clickListener)
+            }
+        }
 
         private val clickListener: View.OnClickListener = View.OnClickListener {
             goalHandler(currentGoal)
         }
-
-        fun bind (item: Goal) {
-            currentGoal = item
-            with(itemView) {
-                goal_title.text = item.title
-                setOnClickListener(clickListener)
-            }
-        }
     }
-
-
 }

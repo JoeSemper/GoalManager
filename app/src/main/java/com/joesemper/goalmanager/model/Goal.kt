@@ -7,6 +7,6 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Goal(
     val id: Long = goalId,
-    val title: String = "New note",
+    val title: String = "New goal",
     val description: String = ""
 ) : Parcelable

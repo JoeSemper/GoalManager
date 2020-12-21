@@ -1,11 +1,12 @@
 package com.joesemper.goalmanager.data
 
-import androidx.lifecycle.LiveData
 import com.joesemper.goalmanager.model.Goal
 import com.joesemper.goalmanager.model.User
+import kotlinx.coroutines.flow.Flow
 
 interface GoalsRepository {
-    fun getCurrentUser(): User?
-    fun observeGoals(): LiveData<List<Goal>>
-    fun addOrReplaceGoal(newGoal: Goal): LiveData<Result<Goal>>
+    suspend fun getCurrentUser(): User?
+    fun observeGoals(): Flow<List<Goal>>
+    suspend fun addOrReplaceGoal(newGoal: Goal)
+    suspend fun deleteGoal(goalId: String)
 }

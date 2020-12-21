@@ -3,43 +3,37 @@ package com.joesemper.goalmanager.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.firebase.ui.auth.AuthUI
 import com.joesemper.goalmanager.R
-import com.joesemper.goalmanager.data.goalsRepository
+import com.joesemper.goalmanager.databinding.ActivitySplashBinding
 import com.joesemper.goalmanager.errors.NoAuthException
 import com.joesemper.goalmanager.presentation.SplashViewModel
 import com.joesemper.goalmanager.presentation.SplashViewState
-import kotlinx.android.synthetic.main.fragment_main.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 private const val RC_SIGN_IN = 458
 
 class SplashActivity : AppCompatActivity() {
 
-    private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProvider(this, object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return SplashViewModel(goalsRepository) as T
-            }
-        }).get(
-            SplashViewModel::class.java
-        )
-    }
+    private val viewModel by viewModel<SplashViewModel>()
 
-    private val layoutRes: Int = R.layout.activity_splash
+    private lateinit var binding: ActivitySplashBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(layoutRes)
+        binding = ActivitySplashBinding.inflate(LayoutInflater.from(this))
+
+        setContentView(binding.root)
 
         viewModel.observeViewState().observe(this) {
-            when(it) {
+            when (it) {
                 is SplashViewState.Error -> renderError(it.error)
-                SplashViewState.Auth ->renderData()
+                SplashViewState.Auth -> renderData()
             }
         }
     }

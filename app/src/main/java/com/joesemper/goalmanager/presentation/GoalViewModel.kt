@@ -1,30 +1,23 @@
 package com.joesemper.goalmanager.presentation
 
 import androidx.lifecycle.*
-import com.joesemper.goalmanager.data.goalsRepository
+import com.joesemper.goalmanager.data.GoalsRepository
 import com.joesemper.goalmanager.model.Goal
+import kotlinx.coroutines.launch
 
-class GoalViewModel (var goal: Goal?) : ViewModel() {
+class GoalViewModel(private val goalsRepository: GoalsRepository, var goal: Goal?) : ViewModel() {
 
     private val showErrorLiveData = MutableLiveData<Boolean>()
 
-    private val lifecycleOwner: LifecycleOwner = LifecycleOwner { viewModelLifecycle }
-    private val viewModelLifecycle = LifecycleRegistry(lifecycleOwner).also {
-        it.currentState = Lifecycle.State.RESUMED
-    }
-
-
-//    fun saveGoal() {
-//        val goalValue = goal ?: return
-//        goalsRepository.addOrReplaceGoal(goalValue)
-//    }
 
     fun saveGoal() {
-        goal?.let { note ->
-            goalsRepository.addOrReplaceGoal(note).observe(lifecycleOwner) {
-                it.onFailure {
-                    showErrorLiveData.value = true
-                }
+        viewModelScope.launch {
+            val goalValue = goal ?: return@launch
+
+            try {
+                goalsRepository.addOrReplaceGoal(goalValue)
+            } catch (th: Throwable) {
+                showErrorLiveData.value = true
             }
         }
     }
@@ -43,5 +36,4 @@ class GoalViewModel (var goal: Goal?) : ViewModel() {
     }
 
     fun showError(): LiveData<Boolean> = showErrorLiveData
-
 }
