@@ -36,6 +36,7 @@ class GoalFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         with(binding) {
             viewModel.goal?.let {
                 goalTitleEt.setText(it.title)

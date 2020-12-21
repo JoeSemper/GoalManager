@@ -9,13 +9,18 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.auth.AuthUI
 import com.joesemper.goalmanager.R
 import com.joesemper.goalmanager.model.Goal
 import com.joesemper.goalmanager.presentation.MainViewModel
 import com.joesemper.goalmanager.presentation.ViewState
 import com.joesemper.goalmanager.ui.adapters.MainGoalsAdapter
+import com.joesemper.goalmanager.ui.adapters.SwipeToDeleteCallback
 import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.coroutines.NonCancellable.cancel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainFragment : Fragment(R.layout.fragment_main), LogoutDialog.LogoutListener {
@@ -38,7 +43,22 @@ class MainFragment : Fragment(R.layout.fragment_main), LogoutDialog.LogoutListen
             navigateToGoal(it)
         }
 
+        mainRecycler.layoutManager = LinearLayoutManager(requireContext())
         mainRecycler.adapter = adapter
+
+        val swipeHandler = object : SwipeToDeleteCallback(requireContext()) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val itemId = getItemIdByPosition(adapter, position)
+
+                callDeleteDialog(itemId)
+                adapter.removeAt(position)
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(mainRecycler)
+
 
         viewModel.observeViewState().observe(viewLifecycleOwner) {
             when (it) {
@@ -65,8 +85,27 @@ class MainFragment : Fragment(R.layout.fragment_main), LogoutDialog.LogoutListen
         (activity as MainActivity).navigateTo(GoalFragment.create(goal))
     }
 
+    private fun deleteGoal(goalId: String) {
+        viewModel.deleteGoal(goalId)
+    }
+
     private fun navigateToNewGoalCreation() {
         (activity as MainActivity).navigateTo(GoalFragment.create(null))
+    }
+
+    private fun getItemIdByPosition(adapter: MainGoalsAdapter, position: Int): String {
+        return adapter.getCurrentItemId(position).toString()
+    }
+
+    private fun callDeleteDialog(itemId: String) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setMessage(R.string.delete_dialog_message)
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
+            .setPositiveButton(getString(R.string.ok_button)) { dialog, _ ->
+                deleteGoal(itemId)
+            }
+        val dialog = builder.create()
+        dialog.show()
     }
 
     override fun onLogout() {
