@@ -1,65 +1,75 @@
 package com.joesemper.goalmanager.ui
 
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.*
-import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.auth.AuthUI
 import com.joesemper.goalmanager.R
+import com.joesemper.goalmanager.databinding.FragmentMainBinding
 import com.joesemper.goalmanager.model.Goal
 import com.joesemper.goalmanager.presentation.MainViewModel
 import com.joesemper.goalmanager.presentation.ViewState
 import com.joesemper.goalmanager.ui.adapters.MainGoalsAdapter
 import com.joesemper.goalmanager.ui.adapters.SwipeToDeleteCallback
 import kotlinx.android.synthetic.main.fragment_main.*
-import kotlinx.coroutines.NonCancellable.cancel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainFragment : Fragment(R.layout.fragment_main), LogoutDialog.LogoutListener {
+
+class MainFragment : Fragment(), LogoutDialog.LogoutListener {
 
     private val viewModel by viewModel<MainViewModel>()
+
+    private var _binding: FragmentMainBinding? = null
+    private val binding: FragmentMainBinding get() = _binding!!
+
+    private val adapter: MainGoalsAdapter by lazy(LazyThreadSafetyMode.NONE) {
+        MainGoalsAdapter {
+            navigateToGoal(it)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        _binding = FragmentMainBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        return super.onCreateView(inflater, container, savedInstanceState)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = MainGoalsAdapter {
-            navigateToGoal(it)
-        }
+        initRecycler()
+        observeData()
+        setOnClickListeners()
+        initToolbar()
+    }
 
-        mainRecycler.layoutManager = LinearLayoutManager(requireContext())
-        mainRecycler.adapter = adapter
+    private fun initRecycler() {
+        binding.mainRecycler.layoutManager = LinearLayoutManager(requireContext())
+        binding.mainRecycler.adapter = adapter
 
-        val swipeHandler = object : SwipeToDeleteCallback(requireContext()) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
-                val itemId = getItemIdByPosition(adapter, position)
-
-                callDeleteDialog(itemId)
-                adapter.removeAt(position)
-            }
-        }
-
-        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        val itemTouchHelper = ItemTouchHelper(getSwipeHandler())
         itemTouchHelper.attachToRecyclerView(mainRecycler)
+    }
 
-
+    private fun observeData() {
         viewModel.observeViewState().observe(viewLifecycleOwner) {
             when (it) {
                 is ViewState.Value -> {
@@ -68,14 +78,20 @@ class MainFragment : Fragment(R.layout.fragment_main), LogoutDialog.LogoutListen
                 ViewState.EMPTY -> Unit
             }
         }
-
-        fab.setOnClickListener {
-            navigateToNewGoalCreation()
-        }
-
-        initToolbar()
     }
 
+    private fun setOnClickListeners() {
+        binding.fab.setOnClickListener {
+            navigateToNewGoalCreation()
+        }
+    }
+
+    private fun getSwipeHandler() = object : SwipeToDeleteCallback(requireContext()) {
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            val position = viewHolder.adapterPosition
+            onRecyclerItemSwiped(position)
+        }
+    }
 
     private fun initToolbar() {
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
@@ -93,8 +109,15 @@ class MainFragment : Fragment(R.layout.fragment_main), LogoutDialog.LogoutListen
         (activity as MainActivity).navigateTo(GoalFragment.create(null))
     }
 
-    private fun getItemIdByPosition(adapter: MainGoalsAdapter, position: Int): String {
+    private fun getItemIdByPosition(position: Int): String {
         return adapter.getCurrentItemId(position).toString()
+    }
+
+    private fun onRecyclerItemSwiped(position: Int) {
+        val itemId = getItemIdByPosition(position)
+        vibrate()
+        callDeleteDialog(itemId)
+        adapter.removeAt(position)
     }
 
     private fun callDeleteDialog(itemId: String) {
@@ -137,6 +160,27 @@ class MainFragment : Fragment(R.layout.fragment_main), LogoutDialog.LogoutListen
                 .show(frManager, LogoutDialog.TAG)
 
 
+    }
+
+    private fun vibrate() {
+        val vibrator = requireActivity().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        val canVibrate: Boolean = vibrator.hasVibrator()
+        val milliseconds = 100L
+
+        if (canVibrate) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // API 26
+                vibrator.vibrate(
+                    VibrationEffect.createOneShot(
+                        milliseconds,
+                        VibrationEffect.DEFAULT_AMPLITUDE
+                    )
+                )
+            } else {
+                // This method was deprecated in API level 26
+                vibrator.vibrate(milliseconds)
+            }
+        }
     }
 
 }

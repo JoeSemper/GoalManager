@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.firebase.ui.auth.AuthUI
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.joesemper.goalmanager.R
 import com.joesemper.goalmanager.databinding.ActivitySplashBinding
 import com.joesemper.goalmanager.errors.NoAuthException
@@ -35,6 +36,12 @@ class SplashActivity : AppCompatActivity() {
                 is SplashViewState.Error -> renderError(it.error)
                 SplashViewState.Auth -> renderData()
             }
+        }
+
+        val acct = GoogleSignIn.getLastSignedInAccount(this)
+        if (acct != null) {
+            val personName = acct.displayName
+            binding.splashText.text = "Hello, $personName!"
         }
     }
 
@@ -65,6 +72,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun startLoginActivity() {
+
         val provides = listOf(
             AuthUI.IdpConfig.EmailBuilder().build(),
             AuthUI.IdpConfig.GoogleBuilder().build(),
