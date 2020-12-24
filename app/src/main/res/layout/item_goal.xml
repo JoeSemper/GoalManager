@@ -5,9 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/small"
+    android:elevation="@dimen/medium"
     app:cardCornerRadius="@dimen/small"
-    app:cardForegroundColor="@color/material_on_surface_stroke"
-    app:cardPreventCornerOverlap="false">
+    app:cardPreventCornerOverlap="false"
+    app:rippleColor="@color/colorPrimary">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

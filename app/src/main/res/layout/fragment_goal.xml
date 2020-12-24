@@ -4,30 +4,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
+    android:layout_weight="1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.GoalFragment">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/goal_appbar"
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_scrollFlags="scroll|snap">
+        android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
-            app:layout_scrollFlags="scroll|snap"
-            app:title="@string/new_goal_title"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
+            android:layout_height="?attr/actionBarSize"
+            app:layout_collapseMode="pin"
+            android:textAlignment="center"
+            app:title="Goal manager"/>
     </com.google.android.material.appbar.AppBarLayout>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:layout_weight="1"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_scrollFlags="scroll|enterAlways">
+        app:layout_scrollFlags="scroll">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/save_button"
@@ -43,7 +47,7 @@
             android:id="@+id/title_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/medium"
+            android:layout_margin="@dimen/card_margin"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -59,19 +63,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginStart="@dimen/title_margin"
-                    android:layout_marginTop="@dimen/title_margin"
-                    android:layout_marginEnd="@dimen/title_margin"
-                    android:layout_marginBottom="@dimen/small"
+                    android:layout_margin="@dimen/title_margin"
                     android:text="Goal title" />
-
-                <View
-                    android:id="@+id/divider"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="@dimen/title_margin"
-                    android:layout_marginEnd="@dimen/title_margin"
-                    android:background="?android:attr/listDivider" />
 
                 <TextView
                     android:id="@+id/goal_description"
@@ -79,18 +72,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_margin="@dimen/medium"
                     android:layout_marginStart="@dimen/medium"
                     android:layout_marginEnd="@dimen/medium"
                     android:layout_marginBottom="@dimen/medium"
-                    android:text="Description"
                     android:textAlignment="center" />
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -5,5 +5,7 @@
     <dimen name="large">16dp</dimen>
 
     <dimen name="title_margin">@dimen/large</dimen>
+    <dimen name="button_margin">32dp</dimen>
+    <dimen name="card_margin">@dimen/medium</dimen>
 
 </resources>

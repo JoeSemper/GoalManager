@@ -5,23 +5,21 @@ import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.DialogFragment
 import com.joesemper.goalmanager.R
-import com.joesemper.goalmanager.databinding.EditTitleDialogBinding
 import com.joesemper.goalmanager.databinding.FragmentGoalBinding
 import com.joesemper.goalmanager.model.Goal
 import com.joesemper.goalmanager.presentation.GoalViewModel
-import kotlinx.android.synthetic.main.edit_title_dialog.*
+import com.joesemper.goalmanager.ui.dialogs.EditTitleDialog
+import com.joesemper.goalmanager.ui.dialogs.TitleChangeDialogListener
 import kotlinx.android.synthetic.main.fragment_goal.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 
-class GoalFragment : Fragment() {
+class GoalFragment : Fragment(), TitleChangeDialogListener {
     private val goal: Goal? by lazy(LazyThreadSafetyMode.NONE) { arguments?.getParcelable(GOAL_KEY) }
 
     private val viewModel by viewModel<GoalViewModel> {
@@ -43,23 +41,20 @@ class GoalFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initUi()
         initToolbar()
-
-        binding.titleCard.setOnClickListener {
-            val alertDialog = EditTitleDialog(binding)
-            alertDialog.show(parentFragmentManager, "dlg")
-        }
+        setOnClickListeners()
     }
 
     private fun initUi() {
         with(binding) {
             viewModel.goal?.let {
-//                goalTitleEt.setText(it.title)
-//                goalDescriptionEt.setText(it.description)
                 goalTitle.text = it.title
-                goalDescription.text = it.description
+                if (it.description != "") {
+                    goalDescription.text = it.description
+                } else {
+                    goalDescription.visibility = View.GONE
+                }
             }
 
             viewModel.showError().observe(viewLifecycleOwner) {
@@ -82,7 +77,7 @@ class GoalFragment : Fragment() {
     }
 
     private fun initToolbar() {
-        with(requireActivity() as AppCompatActivity) {
+        with(activity as AppCompatActivity) {
             setSupportActionBar(toolbar)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             supportActionBar?.setDisplayShowHomeEnabled(true)
@@ -91,10 +86,42 @@ class GoalFragment : Fragment() {
         with(toolbar) {
             setNavigationOnClickListener {
                 viewModel.saveGoal()
-                (activity as AppCompatActivity).onBackPressed()
+                requireActivity().onBackPressed()
             }
             title = getString(R.string.new_goal_title)
         }
+    }
+
+    private fun setOnClickListeners() {
+        binding.titleCard.setOnClickListener {
+            val alertDialog = EditTitleDialog(this)
+            alertDialog.show(parentFragmentManager, "dlg")
+        }
+    }
+
+    override fun setTitle(title: String) {
+        binding.goalTitle.text = title
+    }
+
+    override fun setDescription(description: String) {
+        with(binding) {
+            if(description != "") {
+                goalDescription.visibility =  View.VISIBLE
+                goalDescription.text = description
+            } else {
+                goalDescription.visibility =  View.GONE
+                goalDescription.text = description
+            }
+        }
+
+    }
+
+    override fun getTitle(): String {
+        return binding.goalTitle.text.toString()
+    }
+
+    override fun getDescription(): String {
+        return binding.goalDescription.text.toString()
     }
 
     override fun onDestroyView() {
@@ -114,35 +141,4 @@ class GoalFragment : Fragment() {
         }
     }
 
-}
-
-class EditTitleDialog(private val parentBinding: FragmentGoalBinding): DialogFragment(), View.OnClickListener {
-
-    private var _binding: EditTitleDialogBinding? = null
-    private val binding: EditTitleDialogBinding get() = _binding!!
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = EditTitleDialogBinding.inflate(inflater, container, false)
-        binding.buttonApply.setOnClickListener(this)
-        binding.buttonCancel.setOnClickListener(this)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.titleEt.setText(parentBinding.goalTitle.text)
-        binding.descriptionEt.setText(parentBinding.goalDescription.text)
-        super.onViewCreated(view, savedInstanceState)
-    }
-
-    override fun onClick(v: View?) {
-        if ((v as Button).text == getText(R.string.apply)) {
-            parentBinding.goalTitle.text = binding.titleEt.text
-            parentBinding.goalDescription.text = binding.descriptionEt.text
-        }
-        dismiss()
-    }
 }

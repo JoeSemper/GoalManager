@@ -90,7 +90,7 @@ abstract class SwipeToDeleteCallback(context: Context) :
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int {
-        if (viewHolder.adapterPosition == 10) return 0
+//        if (viewHolder.adapterPosition == 10) return 0
         return super.getMovementFlags(recyclerView, viewHolder)
     }
 

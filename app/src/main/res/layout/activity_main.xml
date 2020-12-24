@@ -6,6 +6,7 @@
     android:id="@+id/fragment_container_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:tag="main_container_tag"
     android:name="com.joesemper.goalmanager.ui.MainFragment"
     tools:context=".ui.MainActivity"/>
