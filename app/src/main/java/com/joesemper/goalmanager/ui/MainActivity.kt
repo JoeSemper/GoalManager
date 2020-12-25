@@ -21,6 +21,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+    }
+
     companion object {
         fun getStartIntent(context: Context) = Intent(context, MainActivity::class.java)
     }

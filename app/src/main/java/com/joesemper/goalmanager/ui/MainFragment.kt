@@ -60,6 +60,8 @@ class MainFragment : Fragment(), LogoutDialog.LogoutListener {
         initToolbar()
     }
 
+
+
     private fun initRecycler() {
         binding.mainRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.mainRecycler.adapter = adapter
@@ -78,6 +80,7 @@ class MainFragment : Fragment(), LogoutDialog.LogoutListener {
             }
         }
     }
+
 
     private fun setOnClickListeners() {
         binding.fab.setOnClickListener {

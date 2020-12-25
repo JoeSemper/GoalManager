@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joesemper.goalmanager.R
 import com.joesemper.goalmanager.databinding.ItemGoalBinding
 import com.joesemper.goalmanager.model.Goal
+import com.joesemper.goalmanager.model.mapToColor
 
 val DIF_UTIL: DiffUtil.ItemCallback<Goal> = object : DiffUtil.ItemCallback<Goal>() {
     override fun areItemsTheSame(oldItem: Goal, newItem: Goal): Boolean {
@@ -29,6 +30,8 @@ val DIF_UTIL: DiffUtil.ItemCallback<Goal> = object : DiffUtil.ItemCallback<Goal>
 
 class MainGoalsAdapter(val goalHandler: (Goal) -> Unit) :
     ListAdapter<Goal, MainGoalsAdapter.GoalViewHolder>(DIF_UTIL) {
+
+    private lateinit var parentGroup: ViewGroup
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GoalViewHolder {
         return GoalViewHolder(parent)
@@ -58,13 +61,13 @@ class MainGoalsAdapter(val goalHandler: (Goal) -> Unit) :
     ) : RecyclerView.ViewHolder(
         binding.root
     ) {
-
         private lateinit var currentGoal: Goal
 
         fun bind(item: Goal) {
             currentGoal = item
             with(binding) {
                 goalTitle.text = item.title
+//                cardGoal.setBackgroundColor(item.color.mapToColor(parent.context))
                 root.setOnClickListener(clickListener)
             }
         }

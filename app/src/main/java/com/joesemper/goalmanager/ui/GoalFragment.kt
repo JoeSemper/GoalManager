@@ -6,11 +6,12 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import com.joesemper.goalmanager.R
 import com.joesemper.goalmanager.databinding.FragmentGoalBinding
-import com.joesemper.goalmanager.model.Goal
+import com.joesemper.goalmanager.model.*
 import com.joesemper.goalmanager.presentation.GoalViewModel
 import com.joesemper.goalmanager.ui.dialogs.EditTitleDialog
 import com.joesemper.goalmanager.ui.dialogs.TitleChangeDialogListener
@@ -55,6 +56,7 @@ class GoalFragment : Fragment(), TitleChangeDialogListener {
                 } else {
                     goalDescription.visibility = View.GONE
                 }
+                titleCard.setBackgroundColor(it.color.mapToColor(requireContext()))
             }
 
             viewModel.showError().observe(viewLifecycleOwner) {
@@ -97,6 +99,7 @@ class GoalFragment : Fragment(), TitleChangeDialogListener {
             val alertDialog = EditTitleDialog(this)
             alertDialog.show(parentFragmentManager, "dlg")
         }
+        setColorChoose()
     }
 
     override fun setTitle(title: String) {
@@ -122,6 +125,34 @@ class GoalFragment : Fragment(), TitleChangeDialogListener {
 
     override fun getDescription(): String {
         return binding.goalDescription.text.toString()
+    }
+
+    private fun setColorChoose() {
+        binding.buttonSetColor.setOnClickListener {
+            val currentColor = viewModel.goal?.color?.index ?: -1
+            val arrayOfColors = getArrayOfColors()
+
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle(getString(R.string.color_select_title))
+                .setSingleChoiceItems(arrayOfColors, currentColor) { dialogInterface, i ->
+                    val color = getColorByNumber(i)
+                    updateColor(color)
+                    dialogInterface.dismiss()
+                }
+                .setNeutralButton(getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
+                .setPositiveButton(getString(R.string.random)) { dialog, _ ->
+                    val color = getRandomColor()
+                    updateColor(color)
+                    dialog.cancel()
+                }
+            val dialog = builder.create()
+            dialog.show()
+        }
+    }
+
+    private fun updateColor(color: Color) {
+        viewModel.updateColor(color)
+        binding.titleCard.setBackgroundColor(color.mapToColor(requireContext()))
     }
 
     override fun onDestroyView() {

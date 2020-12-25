@@ -14,4 +14,7 @@
     <string name="apply">Apply</string>
     <string name="delete_dialog_message">Delete goal?</string>
     <string name="cancel">Cancel</string>
+
+    <string name="color_select_title">Select color</string>
+    <string name="random">Random</string>
 </resources>

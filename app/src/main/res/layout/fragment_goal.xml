@@ -77,9 +77,19 @@
                     android:layout_marginBottom="@dimen/medium"
                     android:textAlignment="center" />
 
+                <ImageButton
+                    android:id="@+id/button_set_color"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end"
+                    android:backgroundTint="@color/fui_transparent"
+                    android:src="@drawable/ic_baseline_color_lens_24"
+                    android:tint="@color/design_default_color_on_secondary" />
+
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

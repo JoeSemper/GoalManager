@@ -2,6 +2,7 @@ package com.joesemper.goalmanager.presentation
 
 import androidx.lifecycle.*
 import com.joesemper.goalmanager.data.GoalsRepository
+import com.joesemper.goalmanager.model.Color
 import com.joesemper.goalmanager.model.Goal
 import kotlinx.coroutines.launch
 
@@ -29,6 +30,10 @@ class GoalViewModel(private val goalsRepository: GoalsRepository, var goal: Goal
 
     fun updateDescription(newDescription: String) {
         goal = (goal ?: generateNewGoal()).copy(description = newDescription)
+    }
+
+    fun updateColor(newColor: Color) {
+        goal = (goal ?: generateNewGoal()).copy(color = newColor)
     }
 
     private fun generateNewGoal(): Goal {
